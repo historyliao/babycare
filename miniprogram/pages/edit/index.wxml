@@ -1,0 +1,73 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="seg">
+    <view class="seg-item {{type === 'sleep' ? 'on' : ''}}" data-type="sleep" bindtap="onType">睡眠</view>
+    <view class="seg-item {{type === 'feed' ? 'on' : ''}}" data-type="feed" bindtap="onType">喂奶</view>
+  </view>
+
+  <view class="card">
+    <view class="form-row">
+      <view class="form-label">开始</view>
+      <view class="form-controls">
+        <picker mode="date" value="{{startDate}}" bindchange="onStartDate">
+          <view class="picker">{{startDate}}</view>
+        </picker>
+        <picker mode="time" value="{{startTime}}" bindchange="onStartTime">
+          <view class="picker">{{startTime}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <block wx:if="{{showEnd}}">
+      <view class="form-row">
+        <view class="form-label">结束</view>
+        <view class="form-controls" wx:if="{{!ongoing}}">
+          <picker mode="date" value="{{endDate}}" bindchange="onEndDate">
+            <view class="picker">{{endDate}}</view>
+          </picker>
+          <picker mode="time" value="{{endTime}}" bindchange="onEndTime">
+            <view class="picker">{{endTime}}</view>
+          </picker>
+        </view>
+        <view wx:else class="muted">进行中，暂不填</view>
+      </view>
+      <view class="form-row">
+        <view class="form-label">尚未结束</view>
+        <switch checked="{{ongoing}}" bindchange="onOngoing" color="#5b8def" />
+      </view>
+    </block>
+
+    <block wx:if="{{type === 'feed'}}">
+      <view class="form-row">
+        <view class="form-label">方式</view>
+        <picker range="{{kindNames}}" value="{{kindIndex}}" bindchange="onKind">
+          <view class="picker">{{kindNames[kindIndex]}}</view>
+        </picker>
+      </view>
+
+      <view class="form-row" wx:if="{{isBreast}}">
+        <view class="form-label">哪一侧</view>
+        <picker range="{{sideNames}}" value="{{sideIndex}}" bindchange="onSide">
+          <view class="picker">{{sideNames[sideIndex]}}</view>
+        </picker>
+      </view>
+
+      <view class="form-row" wx:else>
+        <view class="form-label">奶量 ml</view>
+        <input class="input" type="number" value="{{amountMl}}" placeholder="例如 120"
+               bindinput="onAmount" placeholder-class="ph" />
+      </view>
+    </block>
+
+    <view class="form-row form-row-note">
+      <view class="form-label">备注</view>
+      <textarea class="textarea" value="{{note}}" maxlength="200"
+                placeholder="可选，例如：有点吐奶" bindinput="onNote" placeholder-class="ph" />
+    </view>
+  </view>
+
+  <button class="btn btn-primary" bindtap="save">保存</button>
+  <button class="btn btn-danger" wx:if="{{canDelete}}" bindtap="del">删除这条记录</button>
+
+  <view class="muted tip">时间按北京时间（UTC+8）保存；跨天的睡眠会自动拆分到两天统计。</view>
+</view>

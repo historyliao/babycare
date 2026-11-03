@@ -1,0 +1,123 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="banner" wx:if="{{offline}}">
+    离线中 · {{pending}} 条待同步，已存在本机，联网后自动上传
+  </view>
+
+  <view class="card" wx:if="{{error}}">
+    <view class="card-title">还没连上云端</view>
+    <view class="muted" style="margin:14rpx 0 26rpx;line-height:1.6">{{error}}</view>
+    <button class="btn btn-primary" bindtap="retryBootstrap">重新连接</button>
+    <view class="muted" style="margin-top:18rpx;line-height:1.6">
+      本地记录不受影响。请检查 miniprogram/config.js 的 ENV_ID，以及 cloudfunctions/api 是否已部署。
+    </view>
+  </view>
+
+  <block wx:if="{{ready}}">
+
+    <view class="hero">
+      <view>
+        <view class="hero-date">{{dateLabel}}</view>
+        <view class="hero-family">{{familyName}}</view>
+      </view>
+      <view class="pill {{syncing ? 'pill-on' : ''}}">{{syncing ? '同步中…' : (offline ? '离线' : '已同步')}}</view>
+    </view>
+
+    <view class="grid">
+      <view class="stat">
+        <view class="stat-num">{{summary.sleepText}}</view>
+        <view class="stat-label">今日睡眠</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num">{{summary.nightText}}</view>
+        <view class="stat-label">夜间</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num">{{summary.napCount}}</view>
+        <view class="stat-label">小睡次数</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num">{{summary.feedText}}</view>
+        <view class="stat-label">{{summary.mlText ? summary.mlText : '今日喂奶'}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title"><text class="dot sleep"></text>睡眠</view>
+        <view class="card-sub">{{sleepCard.sub}}</view>
+      </view>
+      <view class="big" wx:if="{{sleepCard.active}}">{{sleepCard.headline}}</view>
+      <view class="mid" wx:else>{{sleepCard.headline}}</view>
+      <button class="btn btn-primary" wx:if="{{sleepCard.active}}" bindtap="endSleep">醒了</button>
+      <button class="btn btn-line" wx:else bindtap="startSleep">开始睡觉</button>
+    </view>
+
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title"><text class="dot feed"></text>喂奶</view>
+        <view class="card-sub">{{feedCard.sub}}</view>
+      </view>
+
+      <block wx:if="{{feedCard.active}}">
+        <view class="big">{{feedCard.headline}}</view>
+        <view class="row gap" style="margin-top:26rpx">
+          <button class="btn btn-line flex1" bindtap="switchSide">换到{{feedCard.nextSideText}}</button>
+          <button class="btn btn-primary flex1" bindtap="endFeed">结束</button>
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="mid" wx:if="{{feedCard.headline}}">{{feedCard.headline}}</view>
+        <view class="row gap" style="margin-top:{{feedCard.headline ? '26rpx' : '0'}}">
+          <button class="btn btn-feed flex1" bindtap="startBreastLeft">亲喂·左</button>
+          <button class="btn btn-feed flex1" bindtap="startBreastRight">亲喂·右</button>
+          <button class="btn btn-line flex1" bindtap="bottle">瓶喂</button>
+        </view>
+      </block>
+    </view>
+
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title">今日时间轴</view>
+        <view class="card-sub">00:00 — 24:00</view>
+      </view>
+      <view class="tl">
+        <view class="tl-track">
+          <view wx:for="{{timeline.sleep}}" wx:key="id"
+                class="tl-block sleep {{item.ongoing ? 'ongoing' : ''}}"
+                style="left:{{item.left}};width:{{item.width}}"></view>
+        </view>
+        <view class="tl-track">
+          <view wx:for="{{timeline.feed}}" wx:key="id"
+                class="tl-block feed"
+                style="left:{{item.left}};width:{{item.width}}"></view>
+        </view>
+        <view class="tl-axis">
+          <text wx:for="{{axis}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      <view class="row gap legend-row">
+        <view class="legend"><text class="dot sleep"></text>睡眠 {{summary.sleepText}}</view>
+        <view class="legend"><text class="dot feed"></text>喂奶 {{summary.feedText}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title">最近记录</view>
+        <view class="card-sub" bindtap="manualAdd">补录 ›</view>
+      </view>
+      <view wx:for="{{recent}}" wx:key="id" class="item" data-id="{{item.id}}" bindtap="openRecord">
+        <view class="item-icon {{item.tone}}">{{item.icon}}</view>
+        <view class="flex1">
+          <view class="item-title">{{item.title}}</view>
+          <view class="item-sub">{{item.time}}</view>
+        </view>
+        <view class="item-right">{{item.right}}</view>
+      </view>
+      <view wx:if="{{recent.length === 0}}" class="empty">还没有记录，点上面的按钮开始</view>
+    </view>
+
+  </block>
+</view>

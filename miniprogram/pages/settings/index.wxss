@@ -1,0 +1,81 @@
+.name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.code-box {
+  margin-top: 28rpx;
+  padding: 24rpx;
+  background: var(--bg);
+  border-radius: 18rpx;
+  text-align: center;
+}
+
+.code {
+  font-size: 48rpx;
+  font-weight: 700;
+  letter-spacing: 8rpx;
+  margin-top: 10rpx;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.join-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.input {
+  flex: 1;
+  height: 80rpx;
+  padding: 0 24rpx;
+  background: var(--bg);
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  letter-spacing: 4rpx;
+}
+
+.ph { color: var(--sub); letter-spacing: 0; }
+
+.join-btn {
+  width: 180rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid var(--line);
+  margin-bottom: 8rpx;
+}
+
+.k {
+  font-size: 28rpx;
+  color: var(--sub);
+}
+
+.v {
+  font-size: 28rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn { margin-top: 20rpx; }
+
+.tip {
+  margin-top: 24rpx;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.danger {
+  color: var(--danger);
+  text-align: center;
+  padding: 10rpx 0;
+}

@@ -1,0 +1,154 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 8rpx 28rpx;
+}
+
+.hero-date {
+  font-size: 34rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.hero-family {
+  font-size: 24rpx;
+  color: var(--sub);
+  margin-top: 8rpx;
+}
+
+.pill-on {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.grid {
+  display: flex;
+  background: var(--card);
+  border-radius: 24rpx;
+  padding: 26rpx 0;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(17, 21, 28, 0.04);
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+  border-right: 2rpx solid var(--line);
+}
+
+.stat:last-child { border-right: none; }
+
+.stat-num {
+  font-size: 32rpx;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: var(--sub);
+  margin-top: 8rpx;
+}
+
+.big {
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 22rpx;
+}
+
+.mid {
+  font-size: 40rpx;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 22rpx;
+}
+
+.tl-track {
+  position: relative;
+  height: 26rpx;
+  background: var(--line);
+  border-radius: 999rpx;
+  margin-bottom: 12rpx;
+  overflow: hidden;
+}
+
+.tl-block {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999rpx;
+}
+
+.tl-block.sleep { background: var(--sleep); }
+.tl-block.feed { background: var(--feed); }
+
+.tl-block.ongoing {
+  background: linear-gradient(90deg, var(--sleep), rgba(108, 122, 224, 0.35));
+}
+
+.tl-axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20rpx;
+  color: var(--sub);
+  margin-top: 4rpx;
+}
+
+.legend-row {
+  margin-top: 18rpx;
+}
+
+.legend {
+  font-size: 22rpx;
+  color: var(--sub);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-top: 2rpx solid var(--line);
+}
+
+.item:first-of-type { border-top: none; }
+
+.item-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 20rpx;
+  text-align: center;
+  line-height: 64rpx;
+  font-size: 26rpx;
+  margin-right: 20rpx;
+  font-weight: 600;
+}
+
+.item-icon.sleep {
+  background: var(--sleep-soft);
+  color: var(--sleep);
+}
+
+.item-icon.feed {
+  background: var(--feed-soft);
+  color: var(--feed);
+}
+
+.item-title {
+  font-size: 28rpx;
+}
+
+.item-sub {
+  font-size: 22rpx;
+  color: var(--sub);
+  margin-top: 6rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-right {
+  font-size: 26rpx;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}

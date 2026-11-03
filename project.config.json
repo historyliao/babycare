@@ -1,0 +1,20 @@
+{
+  "description": "宝宝作息记录（睡眠 / 喝奶）微信小程序",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "babycare",
+  "libVersion": "3.5.5",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "nodeModules": false,
+    "ignoreDevUnusedFiles": false,
+    "ignoreUploadUnusedFiles": true
+  },
+  "condition": {}
+}

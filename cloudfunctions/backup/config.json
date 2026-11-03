@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "dailySnapshot",
+      "type": "timer",
+      "config": "0 30 3 * * * *"
+    }
+  ]
+}

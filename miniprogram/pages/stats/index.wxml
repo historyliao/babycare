@@ -1,0 +1,59 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="seg">
+    <view class="seg-item {{range === 7 ? 'on' : ''}}" data-r="7" bindtap="setRange">近 7 天</view>
+    <view class="seg-item {{range === 30 ? 'on' : ''}}" data-r="30" bindtap="setRange">近 30 天</view>
+  </view>
+
+  <view class="grid">
+    <view class="stat">
+      <view class="stat-num">{{summary.avgSleep}}</view>
+      <view class="stat-label">日均睡眠</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num">{{summary.nightAvg}}</view>
+      <view class="stat-label">日均夜间</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num">{{summary.avgFeed}}次</view>
+      <view class="stat-label">日均喂奶</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num">{{summary.avgMl}}ml</view>
+      <view class="stat-label">日均奶量</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">{{tab === 'sleep' ? '每日睡眠时长' : '每日喂奶次数'}}</view>
+      <view class="card-sub">{{tab === 'sleep' ? '合计 ' + summary.totalSleep : '合计 ' + summary.totalFeed + ' 次'}}</view>
+    </view>
+
+    <view class="seg seg-sm">
+      <view class="seg-item {{tab === 'sleep' ? 'on' : ''}}" data-t="sleep" bindtap="setTab">睡眠</view>
+      <view class="seg-item {{tab === 'feed' ? 'on' : ''}}" data-t="feed" bindtap="setTab">喂奶</view>
+    </view>
+
+    <view wx:for="{{days}}" wx:key="key" class="day-row">
+      <view class="day-label {{item.isToday ? 'today' : ''}}">
+        <view class="day-md">{{item.label}}</view>
+        <view class="day-wd">{{item.weekday}}</view>
+      </view>
+      <view class="bar-wrap">
+        <view wx:if="{{tab === 'sleep'}}" class="bar sleep" style="width:{{item.sleepPct}}"></view>
+        <view wx:else class="bar feed" style="width:{{item.feedPct}}"></view>
+      </view>
+      <view class="day-val">
+        <view class="day-main">{{tab === 'sleep' ? item.sleepText : item.feedText}}</view>
+        <view class="day-sub">{{tab === 'sleep' ? item.sleepSub : item.feedSub}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{days.length === 0}}" class="empty">暂无数据</view>
+  </view>
+
+  <view class="muted tip">
+    今天的数字只统计到当前时刻，会和完整的一天有差距。跨天睡眠按自然日拆分计入。
+  </view>
+</view>

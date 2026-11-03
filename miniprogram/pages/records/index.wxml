@@ -1,0 +1,28 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="seg">
+    <view class="seg-item {{filter === 'all' ? 'on' : ''}}" data-f="all" bindtap="setFilter">全部</view>
+    <view class="seg-item {{filter === 'sleep' ? 'on' : ''}}" data-f="sleep" bindtap="setFilter">睡眠</view>
+    <view class="seg-item {{filter === 'feed' ? 'on' : ''}}" data-f="feed" bindtap="setFilter">喂奶</view>
+  </view>
+
+  <view wx:for="{{groups}}" wx:key="key" class="card">
+    <view class="card-head">
+      <view class="card-title">{{item.label}}</view>
+      <view class="card-sub">{{item.meta}}</view>
+    </view>
+    <view wx:for="{{item.items}}" wx:for-item="rec" wx:key="id" class="item" data-id="{{rec.id}}" bindtap="open">
+      <view class="item-icon {{rec.tone}}">{{rec.icon}}</view>
+      <view class="flex1">
+        <view class="item-title">{{rec.title}}</view>
+        <view class="item-sub">{{rec.time}}</view>
+      </view>
+      <view class="item-right">{{rec.right}}</view>
+      <view class="chev">›</view>
+    </view>
+  </view>
+
+  <view wx:if="{{groups.length === 0}}" class="empty">还没有记录</view>
+
+  <view class="fab" bindtap="add">＋</view>
+</view>

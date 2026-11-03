@@ -1,0 +1,69 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">家庭组</view>
+      <view class="card-sub">{{memberCount}} 位成员</view>
+    </view>
+    <view class="name">{{family.name}}</view>
+    <view class="muted" style="margin-top:8rpx">同一家庭组的成员看到同一份数据，实时共享。</view>
+
+    <view class="code-box" bindtap="copyCode">
+      <view class="muted">邀请码（点按复制）</view>
+      <view class="code">{{inviteCode || '——'}}</view>
+    </view>
+
+    <view class="join-row">
+      <input class="input" value="{{joinCode}}" maxlength="6" placeholder="输入对方邀请码"
+             bindinput="onJoinInput" placeholder-class="ph" />
+      <button class="btn btn-ghost join-btn" bindtap="join">加入</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">同步</view>
+      <view class="card-sub">{{syncing ? '同步中…' : '已就绪'}}</view>
+    </view>
+    <view class="kv">
+      <text class="k">上次同步</text>
+      <text class="v">{{lastSyncText}}</text>
+    </view>
+    <view class="kv">
+      <text class="k">待上传</text>
+      <text class="v">{{pending}} 条</text>
+    </view>
+    <button class="btn btn-line" bindtap="syncNow">立即同步</button>
+  </view>
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">数据安全</view>
+      <view class="card-sub">三重留存</view>
+    </view>
+    <button class="btn btn-line" bindtap="exportCsv">导出 CSV（近 90 天）</button>
+    <button class="btn btn-line" bindtap="backupNow">立即生成云端快照</button>
+    <view class="muted tip" bindtap="storageDoc">了解数据存在哪里 ›</view>
+  </view>
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">外观</view>
+    </view>
+    <view class="kv">
+      <text class="k">夜间模式</text>
+      <switch checked="{{theme === 'dark'}}" bindchange="toggleTheme" color="#5b8def" />
+    </view>
+    <view class="muted">夜里喂奶 / 哄睡时，深色界面不刺眼。</view>
+  </view>
+
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">关于</view>
+      <view class="card-sub">v{{version}}</view>
+    </view>
+    <view class="muted">记录睡眠起止、时长、每日总时长与喝奶；数据存于你自己的云开发环境，不上传第三方服务。</view>
+    <view class="divider"></view>
+    <view class="muted danger" bindtap="resetLocal">清空本机缓存</view>
+  </view>
+</view>

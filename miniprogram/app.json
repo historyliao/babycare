@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/records/index",
+    "pages/stats/index",
+    "pages/settings/index",
+    "pages/edit/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "宝宝作息",
+    "navigationBarBackgroundColor": "#f5f6f8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f6f8",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#8a8f99",
+    "selectedColor": "#5b8def",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/index", "text": "记录" },
+      { "pagePath": "pages/records/index", "text": "明细" },
+      { "pagePath": "pages/stats/index", "text": "统计" },
+      { "pagePath": "pages/settings/index", "text": "设置" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

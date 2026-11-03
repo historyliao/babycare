@@ -1,0 +1,80 @@
+.seg {
+  display: flex;
+  background: var(--card);
+  border-radius: 18rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: var(--sub);
+  border-radius: 14rpx;
+}
+
+.seg-item.on {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+
+.form-row:last-child { border-bottom: none; }
+
+.form-row-note {
+  align-items: flex-start;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: var(--sub);
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+
+.form-controls {
+  display: flex;
+  gap: 16rpx;
+}
+
+.picker {
+  padding: 12rpx 24rpx;
+  background: var(--bg);
+  border-radius: 14rpx;
+  font-size: 28rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.input {
+  flex: 1;
+  text-align: right;
+  font-size: 30rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.textarea {
+  flex: 1;
+  height: 120rpx;
+  font-size: 28rpx;
+  text-align: right;
+}
+
+.ph { color: var(--sub); }
+
+.btn { margin-top: 24rpx; }
+
+.tip {
+  margin-top: 30rpx;
+  text-align: center;
+  line-height: 1.6;
+}
