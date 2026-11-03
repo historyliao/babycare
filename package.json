@@ -4,10 +4,13 @@
   "private": true,
   "description": "宝宝作息记录微信小程序（睡眠 / 喝奶）",
   "scripts": {
-    "test": "node tests/stats.test.js && node tests/store.test.js && node tests/api.test.js",
+    "test": "node tests/stats.test.js && node tests/store.test.js && node tests/server.test.js && node tests/api.test.js",
     "test:stats": "node tests/stats.test.js",
     "test:store": "node tests/store.test.js",
-    "test:api": "node tests/api.test.js"
+    "test:api": "node tests/api.test.js",
+    "test:server": "node tests/server.test.js",
+    "serve": "node server/index.js",
+    "test:ui": "node tests/web-ui.test.js"
   },
   "license": "MIT"
 }

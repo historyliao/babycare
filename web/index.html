@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="宝宝作息">
+<title>宝宝作息</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- 登录 -->
+<div id="login" class="login hidden">
+  <div class="login-box">
+    <div class="logo">🍼</div>
+    <h1>宝宝作息</h1>
+    <p class="muted">输入家庭口令进入。口令由服务端 <code>WEB_PASSCODE</code> 配置。</p>
+    <input id="passcode" type="password" inputmode="numeric" placeholder="家庭口令" autocomplete="current-password">
+    <button id="login-btn" class="btn btn-primary">进入</button>
+    <p id="login-err" class="err"></p>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div id="app" class="app hidden">
+
+  <header class="topbar">
+    <div>
+      <div class="date" id="today-label">—</div>
+      <div class="family" id="family-name">我的家庭</div>
+    </div>
+    <div class="pill" id="sync-pill">已同步</div>
+  </header>
+
+  <!-- 记录 -->
+  <main id="view-home" class="view">
+    <section class="grid" id="summary"></section>
+
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title"><i class="dot sleep"></i>睡眠</span>
+        <span class="muted" id="sleep-sub"></span>
+      </div>
+      <div class="big" id="sleep-headline">0分</div>
+      <button class="btn btn-primary" id="sleep-btn">开始睡觉</button>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title"><i class="dot feed"></i>喂奶</span>
+        <span class="muted" id="feed-sub"></span>
+      </div>
+      <div class="big" id="feed-headline"></div>
+      <div id="feed-actions" class="row gap"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title">今日时间轴</span>
+        <span class="muted">00 — 24</span>
+      </div>
+      <div class="tl">
+        <div class="tl-track" id="tl-sleep"></div>
+        <div class="tl-track" id="tl-feed"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title">最近记录</span>
+        <span class="muted" id="record-count"></span>
+      </div>
+      <div id="recent"></div>
+    </section>
+  </main>
+
+  <!-- 统计 -->
+  <main id="view-stats" class="view hidden">
+    <div class="seg" id="range-seg">
+      <button class="seg-item on" data-range="7">近 7 天</button>
+      <button class="seg-item" data-range="30">近 30 天</button>
+    </div>
+    <section class="grid" id="stats-summary"></section>
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title">每日睡眠</span>
+        <span class="muted" id="stats-total"></span>
+      </div>
+      <div id="stats-list"></div>
+    </section>
+  </main>
+
+  <!-- 设置 -->
+  <main id="view-settings" class="view hidden">
+    <section class="card">
+      <div class="card-head"><span class="card-title">家庭组</span></div>
+      <div class="muted">邀请码（小程序加入同一家庭组时使用）</div>
+      <div class="code" id="invite-code">——</div>
+      <div class="muted">成员数：<span id="member-count">0</span></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><span class="card-title">数据</span></div>
+      <button class="btn btn-line" id="export-btn">导出 CSV</button>
+      <button class="btn btn-line" id="backup-btn">立即生成云端快照</button>
+      <p class="muted small">快照保存在你服务器的备份目录或阿里云 OSS，默认每天 03:30 自动生成。</p>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><span class="card-title">会话</span></div>
+      <button class="btn btn-danger" id="logout-btn">退出登录</button>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab on" data-view="home">记录</button>
+    <button class="tab" data-view="stats">统计</button>
+    <button class="tab" data-view="settings">设置</button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

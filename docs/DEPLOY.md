@@ -1,4 +1,7 @@
-# 部署与运行手册
+# 部署与运行手册（云开发版 · 备选）
+
+> ⚠️ **这不是默认方案。** 默认方案是自建服务器 + 网页版/小程序，见 [SELF-HOST.md](SELF-HOST.md)。
+> 本文仅在「不想维护服务器、愿意付云开发套餐」时使用。
 
 从零到能用，大约 **20 分钟**。每一步都给了「怎么验证这一步成功了」。
 
@@ -256,9 +259,10 @@ head -c 300 records.jsonl
 ## 13. 本地开发与测试
 
 ```bash
-npm test              # 全部 64 条测试
+npm test              # 全部 100 条测试
 npm run test:stats    # 统计口径（23 条）
 npm run test:store    # 同步引擎：离线写入 / 补传 / 多设备合并、分页（14 条）
+npm run test:server   # 自建后端：真 SQLite + 真 HTTP（36 条）
 npm run test:api      # 云函数集成（27 条，内存版 wx-server-sdk 打桩）
 ```
 

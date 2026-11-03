@@ -1,78 +1,97 @@
-# 宝宝作息（微信小程序）
+# 宝宝作息（睡眠 / 喝奶）
 
-记录婴儿的**睡眠**（起止时间、时长、每天总时长）和**喝奶**（亲喂 / 瓶喂母乳 / 配方奶）。
+记录婴儿的**睡眠**（起止、时长、每天总时长）和**喝奶**（亲喂 / 瓶喂母乳 / 配方奶）。
 
-- 主打「单手、两秒完成一次打卡」：`开始睡觉` → `醒了`，`亲喂·左` → `结束`，点两下就记完。
-- 数据落在**微信云开发**，自己账号下的数据库，不经过第三方服务。
-- **离线可用**：没网也能记，联网后自动补传。
-- **家庭共享**：爸爸妈妈爷爷奶奶用邀请码进同一个家庭组，看到同一份数据。
-- 内置**每日云端快照**与 **CSV 导出**，防丢。
+**两种形态，同一套后端、同一个数据库：**
 
-## 快速开始（5 步）
+| 形态 | 成本 | 需要什么 | 什么时候能用 |
+| --- | --- | --- | --- |
+| **网页版（PWA）** — 微信里打开链接 | **¥0** | 只需要你的服务器 | 立刻 |
+| **微信小程序** | ≈ ¥1/月（域名） | 已备案域名（小程序硬性要求） | 备案后（2–3 周） |
+
+> 关键约束：微信小程序只能调用**已备案**的 HTTPS 域名，不支持 IP 和端口。所以"自己的服务器 + 没备案"时，小程序连不上服务器——这是平台规则，绕不过去。
+> 详见 [自建部署手册](docs/SELF-HOST.md) 的路线对比。
+
+## 特点
+
+- **零依赖后端**：只用 Node 内置模块（`node:http` / `node:sqlite` / `node:crypto`），**不需要 `npm install`**。
+- **零成本运行**：SQLite 单文件 + 阿里云 OSS 每日快照，一年数据约 3 MB。
+- **抱娃单手可用**：`开始睡觉` → `醒了`，`亲喂·左` → `结束`，两下记完；支持夜间模式。
+- **离线可用**（小程序端）：断网也能记，联网自动补传；网页版在线使用。
+- **家庭共享**：邀请码 6 位，多人看同一份数据。
+- **数据不丢**：数据库 + 每日 OSS 快照(30 天) + CSV 导出 + 恢复脚本。
+
+## 快速开始
+
+### 网页版（零成本，推荐先跑这个）
 
 ```bash
-git clone <this-repo> && cd babycare
+cp server/.env.example server/.env   # 改 TOKEN_SECRET 和 WEB_PASSCODE
+node server/index.js                 # 不需要 npm install
 ```
 
-1. 微信开发者工具 → 导入项目，目录选**本仓库根目录**，AppID 填自己的小程序 AppID。
-2. 工具栏「云开发」→ 开通 → 创建环境，复制**环境 ID**，填进 [`miniprogram/config.js`](miniprogram/config.js) 的 `ENV_ID`。
-3. 右键 [`cloudfunctions/api`](cloudfunctions/api) → **上传并部署：云端安装依赖**；对 [`cloudfunctions/backup`](cloudfunctions/backup) 同样操作，并「上传触发器」。
-4. 云开发控制台 → 数据库 → 四个集合 `users` / `families` / `records` / `backups` 的权限都设为**仅管理端可读写**（集合会在首次调用时自动创建）。
-5. 点「编译」。首页出现「开始睡觉」即成功。
+浏览器打开 `http://127.0.0.1:3000`，输入 `WEB_PASSCODE` 即可用。
+要让家人在手机上访问，见 [docs/SELF-HOST.md §6](docs/SELF-HOST.md)（Cloudflare Tunnel 免费拿 HTTPS）。
 
-完整步骤（含双人共享、备份恢复演练、上线审核）见 [docs/DEPLOY.md](docs/DEPLOY.md)。
+### 小程序
+
+1. 微信开发者工具导入本仓库根目录，填 AppID
+2. 改 [`miniprogram/config.js`](miniprogram/config.js)：`TRANSPORT: 'http'` + `API_BASE: 'https://你的域名'`
+3. 公众平台 → 开发设置 → 服务器域名 → 添加该域名（需已备案）
+4. 服务端 `.env` 填 `WX_APPID` / `WX_SECRET`（用于 `wx.login` 换 openid）
+
+完整步骤见 [docs/SELF-HOST.md §7](docs/SELF-HOST.md)。
 
 ## 测试
 
-纯逻辑与云函数都有测试，不需要微信环境：
-
 ```bash
-npm test          # 依次跑 统计 / 同步引擎 / 云函数 三组测试
+npm test     # 100 项，无需微信环境、无需 npm install
 ```
 
-- `tests/stats.test.js`：统计口径（跨天拆分、夜觉边界、进行中记录、时区）23 例。
-- `tests/store.test.js`：离线写入、断网补传、多设备合并、软删除同步、坏数据隔离、分页拉取 14 例，打桩 `wx.storage`。
-- `tests/api.test.js`：云函数集成（家庭隔离、幂等、冲突、软删除、导出、备份、分页）27 例，用内存版 `wx-server-sdk` 打桩。
+| 文件 | 覆盖 | 数量 |
+| --- | --- | --- |
+| `tests/stats.test.js` | 统计口径：跨天拆分、夜觉边界、进行中记录、时区 | 23 |
+| `tests/store.test.js` | 小程序离线写入、断网补传、多设备合并、软删除、分页 | 14 |
+| `tests/server.test.js` | 自建后端：真 SQLite + 真 HTTP，家庭隔离、幂等、冲突、导出、备份、恢复 | 36 |
+| `tests/api.test.js` | 云开发版云函数（备选后端） | 27 |
+
+网页版 UI 端到端测试（真实 DOM + 真实 HTTP）需要额外装 jsdom，不在 `npm test` 里：
+
+```bash
+npm i -D jsdom && npm run test:ui    # 18 项：登录、打卡、喂奶、统计、设置、数据落库
+```
 
 ## 目录
 
 ```
-miniprogram/
-  config.js            环境 ID、时区、夜间时段等配置
-  pages/
-    home/              记录：快捷打卡 + 今日概览 + 24h 时间轴
-    records/           明细：按天分组、筛选、进入编辑
-    stats/             统计：近 7/30 天，睡眠与喂奶
-    settings/          设置：家庭组、同步、导出、快照、夜间模式
-    edit/              补录 / 编辑 / 删除
-  utils/
-    store.js           本地缓存 + 离线同步引擎
-    stats.js           统计口径（纯函数，有单测）
-    date.js            时区安全的日期工具（纯函数，有单测）
-    api.js             云函数调用封装
-    view.js            列表/时间轴的展示格式化
-    theme.js / id.js   夜间模式、记录 ID
-cloudfunctions/
-  api/                 单入口业务接口（家庭组、记录 CRUD、导出）
-  backup/              每日快照到云存储（定时触发）
-tests/                 Node 单测与打桩
+server/                  自建后端（零依赖）
+  index.js               HTTP 服务、鉴权、静态文件、定时任务
+  handlers.js            业务逻辑（与云函数版规则一致）
+  db.js                  SQLite 表结构与访问
+  auth.js                签名 token
+  oss.js                 阿里云 OSS 上传（手写 V1 签名，零依赖）
+  backup.js              每日快照 + 过期清理
+  restore.js             从快照恢复（灾难恢复）
+  config.js / .env.example
+web/                     网页版 PWA（原生 JS，无构建）
+miniprogram/             小程序端
+  config.js              TRANSPORT 切换 http / cloud
+  utils/                 store（离线同步）、stats（统计口径）、api（传输层）…
+cloudfunctions/          备选后端：微信云开发版（不推荐，需付费套餐）
+tests/                   全部测试
 docs/
-  DESIGN.md            设计方案：架构、数据模型、统计口径、持久化
-  DEPLOY.md            部署与运行手册
+  SELF-HOST.md           自建部署手册（含备案、OSS、恢复演练、零成本方案）
+  DESIGN.md              设计方案：架构、数据模型、统计口径、持久化
+  DEPLOY.md              云开发版部署手册（备选）
 ```
-
-## 文档
-
-- [设计方案](docs/DESIGN.md) — 技术选型、数据模型、统计口径、持久化与容灾、安全、成本、路线图
-- [部署与运行](docs/DEPLOY.md) — 从注册 AppID 到上线审核、备份恢复演练、排错
 
 ## 数据在哪
 
 | 层 | 位置 | 作用 |
 | --- | --- | --- |
-| 主存储 | 云开发数据库 `records` 集合 | 权威数据，多设备共享 |
-| 本机缓存 | `wx.setStorageSync('bc:store:v1')` | 秒开 + 离线记录，联网自动补传 |
-| 云端快照 | 云存储 `backups/YYYY-MM-DD/*.json` | 每天 03:30 自动生成，保留 30 天 |
+| 主存储 | `server/data/babycare.db`（SQLite） | 权威数据 |
+| 本机缓存 | 小程序 `wx.setStorageSync` | 离线记录、秒开 |
+| 云端快照 | 阿里云 OSS `babycare/YYYY-MM-DD/` | 每天 03:30 自动，保留 30 天 |
 | 离机留存 | 设置页导出 CSV | 自己保存一份，可导入 Excel |
 
-删除是**软删除**（`deleted: true`），误删可在控制台改回来；详见 DEPLOY 的「恢复演练」。
+删除是**软删除**，误删可在库里改回来；恢复步骤见 [docs/SELF-HOST.md §9](docs/SELF-HOST.md)。
