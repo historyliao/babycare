@@ -7,13 +7,16 @@
  */
 module.exports = {
   // ---------------- 后端选择 ----------------
-  TRANSPORT: 'http',
+  // 当前方案：云开发 + 体验版（见 docs/PLAN.md）
+  // 'cloud' = 微信云开发（免备案，免服务器）
+  // 'http'  = 自建服务器（需已备案域名，代码保留，随时可切换）
+  TRANSPORT: 'cloud',
 
-  // http 模式：后端地址。必须是 https，且域名已在微信后台备案配置。
-  // 例：'https://baby.example.com'   或  'https://1.2.3.4:8443'
+  // http 模式才用：后端地址，必须是 https，且域名已在微信后台配置为合法域名。
+  // 例：'https://baby.example.com'
   API_BASE: '',
 
-  // cloud 模式：云开发环境 ID
+  // cloud 模式必填：云开发环境 ID（云开发控制台 → 设置 → 环境 ID）
   ENV_ID: '',
 
   API_FUNCTION: 'api',

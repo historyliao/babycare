@@ -191,6 +191,7 @@ Page({
       self.setData({ syncing: false, offline: false, pending: store.pendingCount() })
       self.render()
       self.warnFailedOnce()
+      self.maybeBackup()
       return res
     }).catch(function (err) {
       self.setData({
@@ -200,6 +201,32 @@ Page({
       })
       self.render()
       throw err
+    })
+  },
+
+  /**
+   * 兜底备份：云开发的「定时触发器」在免费环境里未必可用，
+   * 所以每次打开小程序时检查一次，距上次快照超过 20 小时就静默补一条。
+   * 只要家人每天打开一次，快照就不会断。
+   */
+  maybeBackup() {
+    if (config.TRANSPORT !== 'cloud') return
+    if (this._backupTried) return
+    this._backupTried = true
+
+    let last = 0
+    try {
+      last = Number(wx.getStorageSync('bc:lastBackupAt') || 0)
+    } catch (e) {}
+
+    if (last && Date.now() - last < 20 * 3600 * 1000) return
+
+    api.callFn(config.BACKUP_FUNCTION, { scope: 'family' }).then(function () {
+      try {
+        wx.setStorageSync('bc:lastBackupAt', Date.now())
+      } catch (e) {}
+    }).catch(function () {
+      // 备份失败不影响使用，下次打开再试
     })
   },
 

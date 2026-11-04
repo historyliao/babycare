@@ -2,18 +2,16 @@
 
 记录婴儿的**睡眠**（起止、时长、每天总时长）和**喝奶**（亲喂 / 瓶喂母乳 / 配方奶）。
 
-**两种形态，同一套后端、同一个数据库：**
+**已决策（2026-11-04）：云开发 + 小程序体验版，不备案、不用服务器、¥0/月。**
 
-| 形态 | 成本 | 需要什么 | 什么时候能用 |
+| 形态 | 成本 | 需要什么 | 状态 |
 | --- | --- | --- | --- |
-| **网页版（PWA）** — 微信里打开链接 | **¥0** | 只需要你的服务器 | 立刻 |
-| **微信小程序** | ≈ ¥1/月（域名） | 已备案域名（小程序硬性要求） | 备案后（2–3 周） |
+| **小程序（体验版）** | **¥0** | 云开发免费环境 | ✅ 当前方案 |
+| 网页版（PWA，备用） | ¥0 | 自己的服务器 | 可用，与小程序的数据库相互独立 |
 
-> **已决策（2026-11-03）：走「小程序体验版 + 自建后端 + 备案域名」，不提交审核、不发布。**
-> 成本 ≈¥10/年（只有域名），无月费。执行清单见 [docs/PLAN.md](docs/PLAN.md)。
-
-> 关键约束：微信小程序只能调用**已 ICP 备案**的 HTTPS 域名（不支持 IP 地址；端口支持，但需在后台精确配置）。所以"自己的服务器 + 没备案"时，小程序连不上服务器——这是平台规则，绕不过去。
-> 详见 [自建部署手册](docs/SELF-HOST.md) 的路线对比。
+> 执行清单见 [docs/PLAN.md](docs/PLAN.md)。
+> 云开发的免费活动截止 **2026-12-31**，之后的三条退路（延期 / 转付费 ¥19.9 / 切自建）写在 PLAN 的 §7；
+> 自建方案（备案域名 + 自己的服务器）代码已就绪，随时可切，见 [SELF-HOST.md](docs/SELF-HOST.md)。
 
 ## 特点
 
@@ -26,7 +24,17 @@
 
 ## 快速开始
 
-### 网页版（零成本，推荐先跑这个）
+### 小程序（当前方案）
+
+1. 微信开发者工具导入本仓库根目录，填自己的小程序 AppID
+2. 工具栏「云开发」→ 开通 → 创建环境 → 复制**环境 ID**，填进 [`miniprogram/config.js`](miniprogram/config.js) 的 `ENV_ID`
+3. 右键 `cloudfunctions/api` 和 `cloudfunctions/backup` → **上传并部署：云端安装依赖**
+4. 编译运行 → 上传 → 公众平台「选为体验版」→ 添加家人为体验成员
+
+**不要点「提交审核」和「发布」**，否则免费环境会在 15 天后转付费。
+详细验收标准见 [docs/PLAN.md](docs/PLAN.md)。
+
+### 网页版（备用 / 退路）
 
 ```bash
 cp server/.env.example server/.env   # 改 TOKEN_SECRET 和 WEB_PASSCODE
@@ -34,27 +42,20 @@ node server/index.js                 # 不需要 npm install
 ```
 
 浏览器打开 `http://127.0.0.1:3000`，输入 `WEB_PASSCODE` 即可用。
-要让家人在手机上访问，见 [docs/SELF-HOST.md §6](docs/SELF-HOST.md)（Cloudflare Tunnel 免费拿 HTTPS）。
-
-### 小程序
-
-1. 微信开发者工具导入本仓库根目录，填 AppID
-2. 改 [`miniprogram/config.js`](miniprogram/config.js)：`TRANSPORT: 'http'` + `API_BASE: 'https://你的域名'`
-3. 公众平台 → 开发设置 → 服务器域名 → 添加该域名（需已备案）
-4. 服务端 `.env` 填 `WX_APPID` / `WX_SECRET`（用于 `wx.login` 换 openid）
-
-完整步骤见 [docs/SELF-HOST.md §7](docs/SELF-HOST.md)。
+让家人手机访问见 [docs/SELF-HOST.md §6](docs/SELF-HOST.md)。
+⚠️ 网页版走自建后端，**和小程序的数据不互通**（两套后端）；切回自建方案后才共用。
 
 ## 测试
 
 ```bash
-npm test     # 100 项，无需微信环境、无需 npm install
+npm test     # 106 项，无需微信环境、无需 npm install
 ```
 
 | 文件 | 覆盖 | 数量 |
 | --- | --- | --- |
 | `tests/stats.test.js` | 统计口径：跨天拆分、夜觉边界、进行中记录、时区 | 23 |
 | `tests/store.test.js` | 小程序离线写入、断网补传、多设备合并、软删除、分页 | 14 |
+| `tests/transport.test.js` | 云开发传输层分派与错误映射（当前 `TRANSPORT: 'cloud'`） | 6 |
 | `tests/server.test.js` | 自建后端：真 SQLite + 真 HTTP，家庭隔离、幂等、冲突、导出、备份、恢复 | 36 |
 | `tests/api.test.js` | 云开发版云函数（备选后端） | 27 |
 
@@ -94,9 +95,9 @@ docs/
 
 | 层 | 位置 | 作用 |
 | --- | --- | --- |
-| 主存储 | `server/data/babycare.db`（SQLite） | 权威数据 |
+| 主存储 | 云开发数据库 `records`（当前方案）／`server/data/babycare.db`（自建方案） | 权威数据 |
 | 本机缓存 | 小程序 `wx.setStorageSync` | 离线记录、秒开 |
-| 云端快照 | 阿里云 OSS `babycare/YYYY-MM-DD/` | 每天 03:30 自动，保留 30 天 |
+| 云端快照 | 云存储 `backups/YYYY-MM-DD/` ／ 阿里云 OSS（自建） | 定时 03:30 + 打开小程序时的兜底备份，保留 30 天 |
 | 离机留存 | 设置页导出 CSV | 自己保存一份，可导入 Excel |
 
 删除是**软删除**，误删可在库里改回来；恢复步骤见 [docs/SELF-HOST.md §9](docs/SELF-HOST.md)。
