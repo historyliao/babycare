@@ -210,7 +210,6 @@ Page({
    * 只要家人每天打开一次，快照就不会断。
    */
   maybeBackup() {
-    if (config.TRANSPORT !== 'cloud') return
     if (this._backupTried) return
     this._backupTried = true
 

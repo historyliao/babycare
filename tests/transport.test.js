@@ -1,8 +1,6 @@
 /**
- * 传输层测试：验证 TRANSPORT='cloud' 时 api.js 的分派与错误映射。
+ * 传输层测试：验证 api.js 对云函数的分派与错误映射。
  * 运行：node tests/transport.test.js
- *
- * 只测当前生效的传输模式；如果将来切回 'http'，本测试会自动跳过。
  */
 const assert = require('assert')
 
@@ -27,13 +25,6 @@ global.wx = {
       return opt.success({ result: result })
     }
   }
-}
-
-const config = require('../miniprogram/config')
-
-if (config.TRANSPORT !== 'cloud') {
-  console.log('\n跳过传输层测试：当前 TRANSPORT = ' + config.TRANSPORT + '（本测试针对 cloud 模式）\n')
-  process.exit(0)
 }
 
 const api = require('../miniprogram/utils/api')

@@ -3,7 +3,3 @@ node_modules/
 project.private.config.json
 miniprogram_npm/
 *.log
-
-# 自建后端的运行时数据与密钥，绝不入库
-server/.env
-server/data/
